@@ -46,25 +46,46 @@ class ContentListCreateAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request, template_id):
-        request.data["template"] = template_id  # Vincula el contenido a la plantilla
+        request.data["template"] = template_id  
         serializer = ContentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 
 
-class ContentDetailAPIView(APIView):
-    def get(self, request, pk):
-        content = get_object_or_404(Content, pk=pk)
-        serializer = ContentSerializer(content)
-        return Response(serializer.data)
+# class ContentDetailAPIView(APIView):
+#     def get(self, request, pk):
+#         content = get_object_or_404(Content, pk=pk)
+#         serializer = ContentSerializer(content)
+#         return Response(serializer.data)
 
+#     def patch(self, request, pk):
+#         content = get_object_or_404(Content, pk=pk)
+#         serializer = ContentSerializer(content, data=request.data, partial=True)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ContentDetailAPIView(APIView):
     def patch(self, request, pk):
         content = get_object_or_404(Content, pk=pk)
-        serializer = ContentSerializer(content, data=request.data, partial=True)
+        data = request.data
+
+        # 🔥 En lugar de hacer update(), reemplazamos completamente el campo 'content'
+        if "content" in data:
+            new_content = data["content"]  # Extrae solo el nuevo contenido
+        else:
+            new_content = data  # Si no viene dentro de "content", usamos todo el JSON recibido
+
+        serializer = ContentSerializer(content, data={"content": new_content}, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+

@@ -14,6 +14,7 @@ class Templates(models.Model):
 class Content(models.Model):
     template = models.ForeignKey(Templates, on_delete=models.CASCADE)  
     content = models.JSONField() 
+    section_type = models.CharField(max_length=50, default="general")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
