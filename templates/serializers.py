@@ -8,8 +8,9 @@ class TemplateSerializer(serializers.ModelSerializer):
 
 
 
-
 class ContentSerializer(serializers.ModelSerializer):
+    imageUrl = serializers.ImageField(source="content.welcome.image", use_url=True)
+
     class Meta:
         model = Content
-        fields = '__all__'  
+        fields = '__all__'
